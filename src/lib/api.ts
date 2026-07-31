@@ -4,8 +4,8 @@
  * The server layer of the presentational/container/server split. `useLeadForm`
  * (logic) calls this; `LeadCaptureForm` (UI) never touches fetch directly.
  *
- * Posts the form to the Market Pro app's contact endpoint
- * (`POST https://app.market-pro.pk/contact/`). This is a CROSS-ORIGIN request
+ * Posts the form to the Market Pro backend's contact endpoint
+ * (`POST https://backend.market-pro.pk/contact/`). This is a CROSS-ORIGIN request
  * from the landing page's domain, so that endpoint must return CORS headers
  * allowing this origin. A 201 Created response is treated as success. Field
  * validation is enforced client-side (see useLeadForm) before we ever POST.
@@ -25,12 +25,12 @@ export interface LeadResponse {
 }
 
 /**
- * The contact endpoint on the Market Pro app. Absolute URL because it lives on
- * a different origin (app.market-pro.pk) than the landing page. Override with
- * VITE_LEADS_ENDPOINT if you need to point at staging or a local server.
+ * The contact endpoint on the Market Pro backend. Absolute URL because it lives
+ * on a different origin (backend.market-pro.pk) than the landing page. Override
+ * with VITE_LEADS_ENDPOINT if you need to point at staging or a local server.
  */
 const LEADS_ENDPOINT =
-  (import.meta.env.VITE_LEADS_ENDPOINT as string) || 'https://app.market-pro.pk/contact/'
+  (import.meta.env.VITE_LEADS_ENDPOINT as string) || 'https://backend.market-pro.pk/contact/'
 
 export async function submitLead(payload: LeadPayload): Promise<LeadResponse> {
   try {

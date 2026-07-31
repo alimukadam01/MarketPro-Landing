@@ -7,8 +7,8 @@ the previous one raised, ending in lead capture.
 
 - **Frontend only:** React 18 + TypeScript (strict) + Vite, Tailwind (CSS-variable
   tokens), all animation via Framer Motion. Light mode only.
-- **Lead form** POSTs directly to the Market Pro app's contact endpoint
-  (`https://app.market-pro.pk/contact/`). There is no backend in this repo.
+- **Lead form** POSTs directly to the Market Pro backend's contact endpoint
+  (`https://backend.market-pro.pk/contact/`). There is no backend in this repo.
 
 ---
 
@@ -37,7 +37,7 @@ Vercel, S3/CloudFront, Nginx, …).
 
 The form posts JSON to the contact endpoint (client → `lib/api.ts` → endpoint):
 
-`POST https://app.market-pro.pk/contact/`
+`POST https://backend.market-pro.pk/contact/`
 
 ```json
 { "name": "...", "business_name": "...", "phone": "...", "painpoint": "..." }
@@ -49,7 +49,7 @@ The form posts JSON to the contact endpoint (client → `lib/api.ts` → endpoin
   business name, valid Pakistani mobile (`03XXXXXXXXX` / `+92…`); `painpoint` is
   optional. Nothing is POSTed unless the fields are valid.
 - **Cross-origin:** the landing page and the app are on different origins, so
-  `app.market-pro.pk/contact/` **must send CORS headers** allowing the landing
+  `backend.market-pro.pk/contact/` **must send CORS headers** allowing the landing
   page's origin (and handle the `OPTIONS` preflight). Otherwise the browser
   blocks the response and the form shows a generic network error.
 - **Override the endpoint** for staging/local with `VITE_LEADS_ENDPOINT` in
