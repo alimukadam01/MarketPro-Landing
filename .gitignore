@@ -1,0 +1,19 @@
+# Node / Vite
+node_modules/
+*.local
+.env
+.env.*
+!.env.example
+
+# Python / Django
+__pycache__/
+*.py[cod]
+server/leads.sqlite3
+server/db.sqlite3
+.venv/
+venv/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/

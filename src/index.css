@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * DESIGN TOKENS — single source of truth for colour (light mode only).
+ * Every token is an HSL triplet consumed via `hsl(var(--token))` in
+ * tailwind.config.js. Components never hardcode hex; changing a colour here
+ * cascades everywhere. No dark mode, no `.dark` class — light mode only.
+ */
+:root {
+  --background: 0 0% 98%;
+  --foreground: 224 71.4% 4.1%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 224 71.4% 4.1%;
+
+  --primary: 262.1 83.3% 57.8%; /* #7C3AED purple — reserved for accents/CTAs */
+  --primary-foreground: 210 20% 98%;
+
+  --secondary: 220 14.3% 95.9%;
+  --secondary-foreground: 220.9 39.3% 11%;
+
+  --muted: 220 14.3% 95.9%;
+  --muted-foreground: 220 8.9% 46.1%;
+
+  --accent: 220 14.3% 95.9%;
+  --accent-foreground: 220.9 39.3% 11%;
+
+  --border: 220 13% 91%;
+  --radius: 0.5rem;
+
+  --gradient-primary: linear-gradient(135deg, hsl(262.1 83.3% 57.8%), hsl(250.5 95.2% 76.8%));
+  --gradient-secondary: linear-gradient(135deg, hsl(220 14.3% 95.9%), hsl(220 14.3% 98%));
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    /* Prevent horizontal scroll from parallax/slide-in transforms */
+    overflow-x: hidden;
+  }
+
+  /*
+   * Reduced-motion safety net. The app's `useReducedMotion` hook already
+   * degrades Framer Motion variants to opacity-only fades, but this guard
+   * also neutralises the browser's own smooth-scroll for users who ask for
+   * less motion at the OS level.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar on the horizontal module snap-row (Section 5) while
+     keeping it scrollable — purely cosmetic, no behaviour change. */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

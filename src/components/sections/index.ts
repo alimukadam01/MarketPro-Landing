@@ -1,0 +1,12 @@
+/** Barrel export — sections (Design pattern #7). Ordered by scroll narrative. */
+export { Hero } from './Hero'
+export { Problem } from './Problem'
+export { Solution } from './Solution'
+export { Features } from './Features'
+export { ModuleDisplay } from './ModuleDisplay'
+export { Privacy } from './Privacy'
+export { HowItWorks } from './HowItWorks'
+export { Pricing } from './Pricing'
+export { WhyMarketPro } from './WhyMarketPro'
+export { DemoOffer } from './DemoOffer'
+export { LeadCapture } from './LeadCapture'

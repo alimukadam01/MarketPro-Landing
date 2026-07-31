@@ -1,0 +1,10 @@
+/** Barrel export — ui primitives (Design pattern #7). */
+export { Button, type ButtonProps } from './Button'
+export { Card } from './Card'
+export { Badge } from './Badge'
+export { Input } from './Input'
+export { Select, type SelectOption } from './Select'
+export { ScreenshotFrame } from './ScreenshotFrame'
+export { ModuleCard } from './ModuleCard'
+export { RollingWords } from './RollingWords'
+export { Icon, type IconName } from './Icon'
