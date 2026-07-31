@@ -20,8 +20,6 @@ export interface LeadFields {
   phone: string
   /** Free-text: the shopkeeper's biggest manual-bookkeeping pain. Optional. */
   painpoint: string
-  /** Honeypot — bots fill it, humans can't see it. Never submitted as valid. */
-  company: string
 }
 
 export type LeadErrors = Partial<Record<keyof LeadFields | 'form', string>>
@@ -31,7 +29,6 @@ const EMPTY: LeadFields = {
   businessName: '',
   phone: '',
   painpoint: '',
-  company: '',
 }
 
 export interface UseLeadForm {
@@ -74,13 +71,8 @@ export function useLeadForm(): UseLeadForm {
   }, [])
 
   const submit = useCallback(async () => {
-    // Honeypot: a filled `company` field means a bot — silently no-op as success
-    // so the bot gets no signal, but nothing is submitted.
-    if (fields.company.trim()) {
-      setStatus('success')
-      return
-    }
-
+    // Client-side validation gate — nothing is POSTed unless the fields are
+    // valid (the separate backend does its own validation too).
     const nextErrors = validate(fields)
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors)
@@ -96,7 +88,6 @@ export function useLeadForm(): UseLeadForm {
       businessName: fields.businessName.trim(),
       phone: fields.phone.trim(),
       painpoint: fields.painpoint.trim() || undefined,
-      company: fields.company, // forwarded so the server can also reject bots
     }
 
     const res = await submitLead(payload)

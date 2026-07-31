@@ -4,6 +4,8 @@
 interface ImportMetaEnv {
   /** WhatsApp business number (digits only, incl. country code) for wa.me links. */
   readonly VITE_WHATSAPP_NUMBER?: string
+  /** Override the lead/contact POST endpoint (default: app.market-pro.pk/contact/). */
+  readonly VITE_LEADS_ENDPOINT?: string
 }
 
 interface ImportMeta {

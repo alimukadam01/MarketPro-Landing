@@ -5,43 +5,61 @@ shop-management software for local retail shopkeepers in Hyderabad, Pakistan.
 The page reads like a salesperson: each of the 11 sections resolves the objection
 the previous one raised, ending in lead capture.
 
-- **Frontend:** React 18 + TypeScript (strict) + Vite, Tailwind (CSS-variable
+- **Frontend only:** React 18 + TypeScript (strict) + Vite, Tailwind (CSS-variable
   tokens), all animation via Framer Motion. Light mode only.
-- **Backend:** minimal Django REST Framework — a single `POST /api/leads/`
-  endpoint with SQLite storage, IP rate-limiting, and a honeypot.
+- **Lead form** POSTs directly to the Market Pro app's contact endpoint
+  (`https://app.market-pro.pk/contact/`). There is no backend in this repo.
 
 ---
 
 ## Quick start
 
-Run the two servers in separate terminals.
-
-### 1. Backend (Django, port 8000)
-
-```bash
-cd server
-pip install -r requirements.txt      # Django + djangorestframework
-python manage.py migrate             # creates leads.sqlite3
-python manage.py runserver 127.0.0.1:8000
-```
-
-### 2. Frontend (Vite, port 5173)
-
 ```bash
 npm install
-cp .env.example .env                 # set VITE_WHATSAPP_NUMBER
-npm run dev
+cp .env.example .env      # set VITE_WHATSAPP_NUMBER (and optionally VITE_LEADS_ENDPOINT)
+npm run dev               # http://localhost:5173
 ```
-
-Open http://localhost:5173. The Vite dev server proxies `/api` → `http://127.0.0.1:8000`
-(see `vite.config.ts`), so the form submits same-origin with no CORS setup.
 
 ### Build & typecheck
 
 ```bash
 npm run typecheck    # tsc --noEmit (strict)
 npm run build        # tsc && vite build → dist/
+npm run preview      # serve the production build locally
 ```
+
+`dist/` is a self-contained static site — deploy to any static host (Netlify,
+Vercel, S3/CloudFront, Nginx, …).
+
+---
+
+## Lead submission
+
+The form posts JSON to the contact endpoint (client → `lib/api.ts` → endpoint):
+
+`POST https://app.market-pro.pk/contact/`
+
+```json
+{ "name": "...", "business_name": "...", "phone": "...", "painpoint": "..." }
+```
+
+- **Success:** any `2xx` (the endpoint returns `201 Created`) swaps the form for
+  the Urdu confirmation state.
+- **Validation is client-side** (`useLeadForm`): required name, required
+  business name, valid Pakistani mobile (`03XXXXXXXXX` / `+92…`); `painpoint` is
+  optional. Nothing is POSTed unless the fields are valid.
+- **Cross-origin:** the landing page and the app are on different origins, so
+  `app.market-pro.pk/contact/` **must send CORS headers** allowing the landing
+  page's origin (and handle the `OPTIONS` preflight). Otherwise the browser
+  blocks the response and the form shows a generic network error.
+- **Override the endpoint** for staging/local with `VITE_LEADS_ENDPOINT` in
+  `.env`.
+- Abuse guards (rate-limiting, bot filtering) live on the contact endpoint —
+  there is none in this repo.
+
+The secondary **"WhatsApp pe baat karein"** button is a `wa.me` click-to-chat
+deep link to the business number (default `923313689402`, override with
+`VITE_WHATSAPP_NUMBER`).
 
 ---
 
@@ -50,13 +68,14 @@ npm run build        # tsc && vite build → dist/
 **All copy lives in one file:** [`src/content/sections.ts`](src/content/sections.ts).
 Every heading, list item, module, the RollingWords list, and screenshot path is
 there, typed per section. Components render this config — there is **zero copy in
-JSX**. The founder edits Roman-Urdu copy here and nowhere else.
+JSX**. Edit Roman-Urdu copy here and nowhere else.
 
-- **Section 5 module copy** is placeholder — search for `TODO(FOUNDER)` (exactly
-  one, in `sections.ts`) for the spot to drop final names/taglines.
-- **Screenshots:** replace the placeholder PNGs in `public/screenshots/`
-  (`dashboard`, `inventory`, `reports`, `ledger`, `purchases`). The frame shows a
-  labelled fallback tile if an image is missing, so nothing breaks meanwhile.
+- **Screenshots** live in `public/screenshots/`: `dashboard`, `inventory`,
+  `sales`, `customers`, `purchases` (`suppliers` is available too). The frame
+  shows a labelled fallback tile if an image is missing, so nothing breaks.
+- **Logo / favicon:** `public/logo.png` (wide wordmark, shown at `sm`+) and
+  `public/favicon.png` (square mark, shown in the header on mobile + as the tab
+  icon).
 
 ### Guardrails (do not change)
 
@@ -77,7 +96,7 @@ JSX**. The founder edits Roman-Urdu copy here and nowhere else.
 | Compound components | `FeatureRow`, `ModuleCard`, `StepItem`, `PainCard` |
 | Custom hooks | `useScrollReveal`, `useParallax`, `useReducedMotion`, `useLeadForm` |
 | Shared animation variants | `src/animations/variants.ts` |
-| Presentational / container / server split | `LeadCaptureForm` / `useLeadForm` / `lib/api.ts` |
+| Presentational / container / client split | `LeadCaptureForm` / `useLeadForm` / `lib/api.ts` |
 | Barrel exports | `index.ts` in each folder |
 
 Design tokens (colours, radius, gradients) are declared once in `src/index.css`
@@ -89,30 +108,6 @@ All motion is Framer Motion (no CSS keyframes). Every meaningful element —
 heading, list item, card, screenshot, form field — is individually animated
 within its section's orchestration, and everything degrades to opacity-only
 fades under `prefers-reduced-motion`.
-
----
-
-## Backend API
-
-`POST /api/leads/`
-
-```json
-{ "name": "...", "business_name": "...", "phone": "03XXXXXXXXX",
-  "painpoint": "..." }
-```
-
-- **Validation:** required name; required `business_name`; Pakistani-mobile
-  phone normalised to `03XXXXXXXXX` (accepts `+92`/`0092`/`92`/`0` forms).
-  `painpoint` is optional free text.
-- **Storage:** SQLite `leads` table — `id, name, business_name, phone,
-  painpoint, created_at, status` (`status` defaults to `new`). Only these lead
-  fields are stored; no analytics on form values.
-- **Abuse guard:** IP rate-limit (5/hour, DRF `ScopedRateThrottle`) + a
-  server-checked honeypot (`company` field).
-- **Notification:** `notify_operator(lead)` logs to the console now, with a
-  clearly-marked slot in `server/leads/notifications.py` for an email/WhatsApp
-  webhook later.
-- No auth, no payments, no dashboards — lead-gen only.
 
 ---
 
@@ -128,6 +123,6 @@ src/
               ModuleCard, RollingWords, Icon
   content/sections.ts           # ← single source of truth for copy
   hooks/                        # useScrollReveal, useParallax, useReducedMotion, useLeadForm
-  lib/                          # phone validation, api client
-server/                         # Django project (marketpro) + leads app
+  lib/                          # phone validation, contact-endpoint client
+public/                         # logo.png, favicon.png, screenshots/
 ```

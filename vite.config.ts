@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react'
 import path from 'node:path'
 
 // Vite config: React plugin + `@/…` path alias mirroring tsconfig `paths`.
-// The dev server proxies /api to the Django backend so the frontend can call
-// the lead-capture endpoint on the same origin during development.
+// The lead form POSTs directly to the Market Pro app's contact endpoint
+// (app.market-pro.pk/contact/), so no local API proxy is needed.
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -14,11 +14,5 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:8000',
-        changeOrigin: true,
-      },
-    },
   },
 })

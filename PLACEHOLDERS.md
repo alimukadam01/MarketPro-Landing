@@ -76,4 +76,3 @@ These look like placeholders but are intentional UI, not stand-in content:
 - `placeholder="03XXXXXXXXX"` on the Phone field — a format hint for the user.
 - The `(optional)` label on the painpoint/other optional fields.
 - `ScreenshotFrame`'s fallback tile — only shows if a screenshot file is missing.
-- The dev SQLite DB (`server/leads.sqlite3`) test rows — dev data, gitignored.

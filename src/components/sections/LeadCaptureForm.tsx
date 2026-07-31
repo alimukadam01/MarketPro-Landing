@@ -66,19 +66,6 @@ export function LeadCaptureForm({ form, reduced }: LeadCaptureFormProps) {
             animate="visible"
             className="flex flex-col gap-5"
           >
-          {/* Honeypot — off-screen, not for humans. A filled value ⇒ bot. */}
-          <div aria-hidden className="pointer-events-none absolute left-[-9999px] h-0 w-0 overflow-hidden">
-            <label htmlFor="company">Company</label>
-            <input
-              id="company"
-              type="text"
-              tabIndex={-1}
-              autoComplete="off"
-              value={fields.company}
-              onChange={(e) => setField('company', e.target.value)}
-            />
-          </div>
-
           <motion.div variants={pick(fadeUp)}>
             <Input
               id="name"
