@@ -328,6 +328,11 @@ export const content: SiteContent = {
         body: 'Kaun sa maal, kis rate pe, kab liya.',
         screenshot: { src: '/screenshots/purchases.png', alt: 'Purchases tracking screen' },
       },
+      {
+        title: 'Khaata',
+        body: 'Cash, bank aur cheque ka poora hisaab — rozana cash in hand aur munafa ek nazar mein.',
+        screenshot: { src: '/screenshots/accounting.png', alt: 'Accounting overview screen' },
+      },
     ],
   },
 
@@ -358,6 +363,7 @@ export const content: SiteContent = {
           { name: 'Returned Items', icon: 'undo2', status: 'available' },
           { name: 'Backlog Items', icon: 'clipboard-list', status: 'available' },
           { name: 'Employees', icon: 'user-cog', status: 'available' },
+          { name: 'Accounting', icon: 'landmark', status: 'available' },
         ],
       },
     ],

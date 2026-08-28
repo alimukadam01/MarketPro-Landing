@@ -35,6 +35,7 @@ export type IconName =
   | 'user-cog'
   | 'sparkles'
   | 'check'
+  | 'landmark'
 
 const PATHS: Record<IconName, JSX.Element> = {
   box: (
@@ -180,6 +181,13 @@ const PATHS: Record<IconName, JSX.Element> = {
     </>
   ),
   check: <path d="M20 6 9 17l-5-5" />,
+  landmark: (
+    <>
+      <path d="M3 22h18" />
+      <path d="M6 18v-7M10 18v-7M14 18v-7M18 18v-7" />
+      <path d="M12 2 20 7H4Z" />
+    </>
+  ),
 }
 
 interface IconProps extends SVGProps<SVGSVGElement> {
